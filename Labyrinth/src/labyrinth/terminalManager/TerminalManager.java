@@ -9,6 +9,8 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.*;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.nio.charset.Charset;
@@ -19,31 +21,18 @@ import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
-interface WindowDelegate {
-    /**
-     * onClose.
-     * 
-     * if you return false window wont close, if you return true it will.
-     */
-    public boolean windowClosing();
-    public void windowResizing();
-}
-
-interface KeyboardDelegate {
-    public void keyPressed(Key key);
-}
-
 /**
  *
  * @author D
  */
-public class TerminalManager extends Thread {
+public class TerminalManager extends Thread implements CharacterDelegate {
     
     /**
      * public protocols
      */
     public WindowDelegate windowDelegate;
     public KeyboardDelegate keyboardDelegate;
+    public WindowResizeDelegate windowResizeDelegate;
     
     /**
      * the terminal.
@@ -91,6 +80,7 @@ public class TerminalManager extends Thread {
         
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowEventAdapter());
+        frame.addComponentListener(new WindowResizedAdapter());
         
         if(shouldRun) {
             super.start();
@@ -191,7 +181,7 @@ public class TerminalManager extends Thread {
         public void windowClosing(WindowEvent ev) {
             boolean response = true;
             if(windowDelegate != null) {
-                response = windowDelegate.windowClosing();
+                response = windowDelegate.windowClosing(ev);
             }
 
             // close and exit
@@ -200,5 +190,19 @@ public class TerminalManager extends Thread {
                  System.exit(0);
             }
          }
+    }
+    
+    class WindowResizedAdapter extends ComponentAdapter {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            // do stuff        
+            if(windowDelegate != null) {
+                windowDelegate.windowResizing(e);
+            }
+            
+            if(windowResizeDelegate != null) {
+                windowResizeDelegate.windowResizing(e);
+            }
+        }
     }
 }

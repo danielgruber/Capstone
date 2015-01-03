@@ -13,9 +13,9 @@ import com.googlecode.lanterna.terminal.Terminal.Color;
  */
 public class TerminalWriter {
     
-    TerminalManager manager;
+    CharacterDelegate manager;
     
-    public TerminalWriter(TerminalManager m) {
+    public TerminalWriter(CharacterDelegate m) {
         this.manager = m;
     }
     
