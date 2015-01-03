@@ -5,8 +5,8 @@
  */
 package labyrinth;
 
-import com.googlecode.lanterna.TerminalFacade;
-import com.googlecode.lanterna.terminal.Terminal;
+import labyrinth.terminalManager.TerminalManager;
+import labyrinth.terminalManager.TerminalWriter;
 
 /**
  *
@@ -14,12 +14,18 @@ import com.googlecode.lanterna.terminal.Terminal;
  */
 public class Labyrinth {
 
+    static TerminalManager manager;
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        manager = new TerminalManager();
+        manager.start();
         
+        TerminalWriter w = new TerminalWriter(manager);
+        w.writeText("Hallo Welt", 1, 1);
     }
     
 }
