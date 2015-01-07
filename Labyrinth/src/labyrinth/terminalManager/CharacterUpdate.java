@@ -18,7 +18,7 @@ public class CharacterUpdate {
     Color foregroundColor;
     Color backgroundColor;
     
-    CharacterUpdate(char character, int positionX, int positionY) {
+    public CharacterUpdate(char character, int positionX, int positionY) {
         this.character = character;
         this.positionX = positionX;
         this.positionY = positionY;
@@ -26,7 +26,7 @@ public class CharacterUpdate {
         this.backgroundColor = Color.BLACK;
     }
     
-    CharacterUpdate(char character, int positionX, int positionY, Color foreground, Color background) {
+    public CharacterUpdate(char character, int positionX, int positionY, Color foreground, Color background) {
         this.character = character;
         this.positionX = positionX;
         this.positionY = positionY;

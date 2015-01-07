@@ -35,6 +35,8 @@ abstract public class View extends Thread {
     
     private boolean isVisible = false;
     
+    abstract public ViewCharacter[][] getCompleteView(int rows, int columns);
+    
     /**
      * gets minimum size of window.
      */
@@ -48,9 +50,9 @@ abstract public class View extends Thread {
     void windowSizeUpdated(int rows, int columns) {
         this.rowsVisible = rows;
         this.columnsVisible = columns;
+        
+        System.out.println("Size updated: " + rows + "x" + columns);
     }
-    
-    abstract public char[][] getCompleteView(int rows, int columns);
     
     void setVisible(boolean visiblity) {
         isVisible = visiblity;
@@ -62,6 +64,47 @@ abstract public class View extends Thread {
     
     public boolean isVisible() {
         return getVisible();
+    }
+    
+    /**
+     * fills an array with ViewCharacters
+     * 
+     * @param arr
+     * @param pos
+     * @param s
+     * @return 
+     */
+    public ViewCharacter[] fillCharArray(ViewCharacter[] arr, int pos, String s) {
+        for(int i = 0; i < s.length(); i++) {
+            arr[i + pos] = new ViewCharacter(s.charAt(i));
+        }
+        return arr;
+    }
+    
+    public ViewCharacter[] fillLineWithAlignCenter(ViewCharacter[] arr, String s) {
+        if(arr.length < s.length()) {
+            return fillCharArray(arr, 0, s);
+        } else {
+            int l = Math.round((arr.length - s.length()) / 2);
+            for(int i = 0; i < arr.length; i++) {
+                if(i >= l && i < l + s.length()) {
+                    arr[i] = new ViewCharacter(s.charAt(i - l));
+                } else {
+                    arr[i] = new ViewCharacter(' ');
+                    
+                }
+            }
+            return arr;
+            
+        }
+        
+        
+    }
+    
+    public ViewCharacter[][] createViewMatrix(int x, int y) {
+        ViewCharacter[][] view = new ViewCharacter[x][y];
+        
+        return view;
     }
     
 }

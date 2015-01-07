@@ -5,6 +5,8 @@
  */
 package labyrinth.terminalManager.view;
 
+import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.terminal.Terminal.Color;
 import labyrinth.terminalManager.CharacterDelegate;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.awt.event.ComponentEvent;
@@ -16,7 +18,7 @@ import labyrinth.terminalManager.*;
  * 
  * @author D
  */
-public class ViewManager implements WindowResizeDelegate, CharacterDelegate {
+public class ViewManager implements WindowResizeDelegate, CharacterDelegate, KeyboardDelegate {
     
     /**
      * terminalManager that is managed.
@@ -28,11 +30,12 @@ public class ViewManager implements WindowResizeDelegate, CharacterDelegate {
      */
     View view;
     
-    public ViewManager(labyrinth.terminalManager.TerminalManager m) {
+    public ViewManager(TerminalManager m) {
         super();
         
         manager = m;
         manager.windowResizeDelegate = this;
+        manager.keyboardDelegate = this;
     }
     
     public void windowResizing(ComponentEvent e) {
@@ -48,23 +51,66 @@ public class ViewManager implements WindowResizeDelegate, CharacterDelegate {
             throw new IllegalArgumentException("ViewManager.setView(View v): The View can't be null.");
         }
         
-        if(view.equals(v)) {
+        if(view != null && view.equals(v)) {
             return;
         }
         
+        
+        removeView();
+        
+        view = v;
+        
+        view.windowSizeUpdated(getTerminalSize().getRows(), getTerminalSize().getColumns());
+        manager.setMinimumSize(view.getMinimumSize());
+        
+        ViewCharacter[][] info = view.getCompleteView(getTerminalSize().getRows(), getTerminalSize().getColumns());
+        
+        //debugViewInfo(info);
+        
+        for(int y = 0; y < info.length; y++) {
+            for(int k = 0; k < info[y].length; k++) {
+                ViewCharacter vc = info[y][k];
+                if(vc != null) {
+                    setCharacter(getCharacterUpdate(k + 1, y + 1, vc.getCharacter(), vc.foregroundColor, vc.backgroundColor));
+                }
+            }
+        }
+        view.characterDelegate = this;
+        view.setVisible(true); 
+    }
+    
+    void debugViewInfo(ViewCharacter[][] info) {
+        for(int x = 0; x < info.length; x++) {
+            for(int y = 0; y < info[0].length; y++) {
+                ViewCharacter vc = info[x][y];
+                if(vc != null) {
+                    System.out.print(vc.getCharacter() + ",\t");
+                } else {
+                     System.out.print(",\t");
+                }
+            }
+            
+            System.out.print("\n");
+        }
+    }
+    
+    public CharacterUpdate getCharacterUpdate(int x, int y, char c, Color f, Color b) {
+        return new CharacterUpdate(c, x, y, f, b);
+    }
+    
+    public TerminalSize getTerminalSize() {
+        return manager.getSize();
+    }
+    
+    public void removeView() {
         if(view != null) {
             view.characterDelegate = null;
             view.setVisible(false);
             view = null;
             manager.clear();
         }
-        
-        
-        view = v;
-        view.characterDelegate = this;
-        view.setVisible(true);
     }
-
+    
     @Override
     public boolean setCharacter(int x, int y, char c) {
         return manager.setCharacter(x, y, c);
@@ -73,5 +119,12 @@ public class ViewManager implements WindowResizeDelegate, CharacterDelegate {
     @Override
     public boolean setCharacter(CharacterUpdate c) {
         return manager.setCharacter(c);
+    }
+
+    @Override
+    public void keyPressed(Key key) {
+       if(view != null && view instanceof KeyboardDelegate) {
+           ((KeyboardDelegate)view).keyPressed(key);
+       }
     }
 }

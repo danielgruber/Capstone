@@ -5,8 +5,12 @@
  */
 package labyrinth;
 
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
 import labyrinth.terminalManager.TerminalManager;
 import labyrinth.terminalManager.TerminalWriter;
+import labyrinth.terminalManager.WindowDelegate;
+import labyrinth.terminalManager.view.ViewManager;
 
 /**
  *
@@ -15,6 +19,7 @@ import labyrinth.terminalManager.TerminalWriter;
 public class Labyrinth {
 
     static TerminalManager manager;
+    static ViewManager viewManager;
     
     /**
      * @param args the command line arguments
@@ -24,8 +29,8 @@ public class Labyrinth {
         manager = new TerminalManager();
         manager.start();
         
-        TerminalWriter w = new TerminalWriter(manager);
-        w.writeText("Hallo Welt", 1, 1);
+        viewManager = new ViewManager(manager);
+        viewManager.setView(new GameMenu(false));
     }
     
 }

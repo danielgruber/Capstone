@@ -9,6 +9,7 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.*;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
+import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
@@ -52,6 +53,7 @@ public class TerminalManager extends Thread implements CharacterDelegate {
     
     public TerminalManager() {
         terminal = TerminalFacade.createSwingTerminal();
+        terminal.setCursorVisible(false);
         frameUpdates = new LinkedList();
     }
     
@@ -104,7 +106,7 @@ public class TerminalManager extends Thread implements CharacterDelegate {
      */
     public boolean setCharacter(int x, int y, char character) {
         TerminalSize size = this.getSize();
-        if(size.getRows() < x || size.getColumns() < y) {
+        if(size.getColumns() < x || size.getRows() < y) {
             return false;
         }
         
@@ -115,13 +117,23 @@ public class TerminalManager extends Thread implements CharacterDelegate {
     
     public boolean setCharacter(CharacterUpdate c) {
         TerminalSize size = this.getSize();
-        if(size.getRows() < c.positionX || size.getColumns() < c.positionY) {
+        if(size.getColumns() < c.positionX || size.getRows() < c.positionY) {
+            System.out.println("Size out of bounds: X:"+c.positionX+"/"+size.getRows()+"; Y: "+c.positionY+"/"+size.getColumns()+"");
             return false;
         }
         
         frameUpdates.addLast(c);
         
         return true;
+    }
+    
+    public boolean setMinimumSize(Dimension d) {
+        if(frame != null) {
+            frame.setMinimumSize(d);
+            return true;
+        } else {
+            return false;
+        }
     }
     
     public void clear() {
@@ -163,7 +175,7 @@ public class TerminalManager extends Thread implements CharacterDelegate {
             
             synchronized (terminal) {
                 terminal.moveCursor(c.positionX, c.positionY);
-
+                
                 if(c.foregroundColor != null) {
                     terminal.applyBackgroundColor(c.foregroundColor);
                 }
