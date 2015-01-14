@@ -71,7 +71,7 @@ public class ViewManager implements WindowResizeDelegate, CharacterDelegate, Key
             for(int k = 0; k < info[y].length; k++) {
                 ViewCharacter vc = info[y][k];
                 if(vc != null) {
-                    setCharacter(getCharacterUpdate(k + 1, y + 1, vc.getCharacter(), vc.foregroundColor, vc.backgroundColor));
+                    setCharacter(getCharacterUpdate(k, y, vc.getCharacter(), vc.foregroundColor, vc.backgroundColor));
                 }
             }
         }
@@ -95,7 +95,7 @@ public class ViewManager implements WindowResizeDelegate, CharacterDelegate, Key
     }
     
     public CharacterUpdate getCharacterUpdate(int x, int y, char c, Color f, Color b) {
-        return new CharacterUpdate(c, x, y, f, b);
+        return new CharacterUpdate(c, x + 1, y + 1, f, b);
     }
     
     public TerminalSize getTerminalSize() {
@@ -113,7 +113,7 @@ public class ViewManager implements WindowResizeDelegate, CharacterDelegate, Key
     
     @Override
     public boolean setCharacter(int x, int y, char c) {
-        return manager.setCharacter(x, y, c);
+        return manager.setCharacter(x + 1, y + 1, c);
     }
     
     @Override

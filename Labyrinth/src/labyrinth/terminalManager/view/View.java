@@ -6,8 +6,10 @@
 */
 package labyrinth.terminalManager.view;
 
+import com.googlecode.lanterna.terminal.Terminal;
 import java.awt.Dimension;
 import labyrinth.terminalManager.CharacterDelegate;
+import labyrinth.terminalManager.CharacterUpdate;
 
 
 /**
@@ -66,6 +68,10 @@ abstract public class View extends Thread {
         return getVisible();
     }
     
+    public ViewCharacter c(char c) {
+        return new ViewCharacter(c);
+    }
+    
     /**
      * fills an array with ViewCharacters
      * 
@@ -97,14 +103,39 @@ abstract public class View extends Thread {
             return arr;
             
         }
-        
-        
+    }
+    
+    public boolean setCharacterLine(ViewCharacter[] arr, int y, int x) {
+        boolean good = true;
+        for(int i = 0; i < arr.length; i++) {
+            CharacterUpdate c = getCharacterUpdate(x + i, y, arr[i].getCharacter(), arr[i].foregroundColor, arr[i].backgroundColor);
+            if(!this.setCharacter(c)) {
+                good = false;
+            }
+        }
+        return good;
+    }
+    
+    public boolean setCharacterLine(ViewCharacter[] arr, int y) {
+        return this.setCharacterLine(arr, y, 0);
     }
     
     public ViewCharacter[][] createViewMatrix(int x, int y) {
         ViewCharacter[][] view = new ViewCharacter[x][y];
         
         return view;
+    }
+    
+    public CharacterUpdate getCharacterUpdate(int x, int y, char c, Terminal.Color f, Terminal.Color b) {
+        return new CharacterUpdate(c, x + 1, y + 1, f, b);
+    }
+    
+    public boolean setCharacter(int x, int y, char c) {
+        return characterDelegate.setCharacter(x, y, c);
+    }
+    
+    public boolean setCharacter(CharacterUpdate c) {
+        return characterDelegate.setCharacter(c);
     }
     
 }

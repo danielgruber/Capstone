@@ -14,9 +14,9 @@ import com.googlecode.lanterna.terminal.Terminal;
  */
 public class ViewCharacter {
     
-    char character;
-    Terminal.Color foregroundColor;
-    Terminal.Color backgroundColor;
+    public char character;
+    public Terminal.Color foregroundColor;
+    public Terminal.Color backgroundColor;
     
     public ViewCharacter(char c) {
         character = c;
