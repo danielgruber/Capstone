@@ -117,7 +117,6 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
     public void loadFile(String filename) {
         try {
             GameModel m = loadGameModel(filename);
-            m.debug();
             GameView v = loadGameViewWithModel(m);
             v.delegate = this;
             viewManager.setView(v);
