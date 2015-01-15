@@ -101,11 +101,10 @@ public class GameModel {
             
             PositionInfo e = getFirstEntrance();
             if(e == null) {
-                 throw new Exception("Could not place Player. No Entrance found.");
+                 throw new PlayerNotFoundException(" No Entrance found.");
             }
             
-            if(e.y > 1 && matrix[e.x][e.y + 1] == null) {
-                
+            if(e.x > 1 && matrix[e.x][e.y + 1] == null) {
                 e.y = e.y + 1;
                 matrix[e.x][e.y] = new Player();
                 playerPosition = e;
@@ -114,20 +113,52 @@ public class GameModel {
                 matrix[e.x][e.y] = new Player();
                 playerPosition = e;
             } else {
-                throw new Exception("Could not place Player. No Valid position found." + e);
+               throw new PlayerNotFoundException(" No Valid position found." + e);
             }
+            
+            System.out.println("Set player on Position " + e);
         }
     }
     
     public PositionInfo getFirstEntrance() {
-         for(int i = 0; i < matrix.length; i++) {
-            for(int j = 0; j < matrix[i].length; j++) {
-                if(matrix[i][j] instanceof Eingang) {
-                    return new PositionInfo(i, j);
-                }
-            }
-         }
-         return null;
+        return getEntrance(0);
+    }
+    
+    public PositionInfo getEntrance(int e) {
+        int f = 0;
+        for(int i = 0; i < matrix.length; i++) {
+           for(int j = 0; j < matrix[i].length; j++) {
+               if(matrix[i][j] instanceof Eingang) {
+                   if(e == f) {
+                       return new PositionInfo(i, j);
+                   }
+                   f++;
+               }
+           }
+        }
+        return null;
+    }
+    
+    public int width() {
+        return matrix.length;
+    }
+    
+    public int height() {
+        if(matrix.length > 0) {
+            return matrix[0].length;
+        } else {
+            return 0;
+        }
+    }
+    
+    public GameObject getObjectAt(PositionInfo position) {
+        if(position.x < this.width() && position.y < this.height()) {
+            return matrix[position.x][position.y];
+        } else {
+            return null;
+        }
+               
+        
     }
     
     public void debug() {
