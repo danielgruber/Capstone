@@ -41,7 +41,22 @@ public class ViewManager implements WindowResizeDelegate, CharacterDelegate, Key
     public void windowResizing(ComponentEvent e) {
         if(view != null) {
             TerminalSize size = manager.getSize();
-            view.windowSizeUpdated(size.getRows(), size.getColumns());
+            
+            synchronized (view) {
+                view.windowSizeUpdated(size.getRows(), size.getColumns());
+                manager.clear();
+                ViewCharacter[][] info = view.getCompleteView(size.getRows(), size.getColumns());
+                for(int y = 0; y < info.length; y++) {
+                    for(int k = 0; k < info[y].length; k++) {
+                        ViewCharacter vc = info[y][k];
+                        if(vc != null) {
+                            setCharacter(getCharacterUpdate(k, y, vc.getCharacter(), vc.foregroundColor, vc.backgroundColor));
+                        } else {
+                            setCharacter(getCharacterUpdate(k, y, ' ', null, null));
+                        }
+                    }
+                }
+            }
         }
     }
     

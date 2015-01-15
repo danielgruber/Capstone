@@ -10,6 +10,8 @@ package labyrinth.game;
  *
  * @author D
  */
-public class GameController {
-    
+
+public interface GameLoadDelegate {
+    public void loadFile(String filename);
+    public void cancelLoading();
 }

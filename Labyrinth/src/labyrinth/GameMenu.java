@@ -38,6 +38,8 @@ public class GameMenu extends View implements KeyboardDelegate {
     protected int topPos;
     protected int arrowPos = 4;
     
+    public GameMenuDelegate delegate;
+    
     public GameMenu(boolean gameLoaded) {
         this.gameLoaded = gameLoaded;
     }
@@ -125,6 +127,8 @@ public class GameMenu extends View implements KeyboardDelegate {
             arrowUp();
         } else if(key.getKind() == Kind.Enter) {
             runAction();
+        } else if(key.getKind() == Kind.Escape) {
+            System.exit(0);
         }
     }
     
@@ -133,7 +137,20 @@ public class GameMenu extends View implements KeyboardDelegate {
         
         if(menu[position] == GAME_EXIT) {
             System.exit(0);
+        } else {
+            if(this.delegate != null) {
+                this.delegate.actionFired(menu[position]);
+            }
         }
     }
     
+    @Override
+    protected void windowSizeUpdated(int rows, int columns) {
+        super.windowSizeUpdated(rows, columns);
+        topPos = (rowsVisible - 10) / 2;
+    }
+}
+
+interface GameMenuDelegate {
+    public void actionFired(int action);
 }

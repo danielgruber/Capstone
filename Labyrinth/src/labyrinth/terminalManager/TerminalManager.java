@@ -8,6 +8,7 @@ package labyrinth.terminalManager;
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.*;
+import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
@@ -105,26 +106,30 @@ public class TerminalManager extends Thread implements CharacterDelegate {
      * returns false if character can't be set when the terminal is too small.
      */
     public boolean setCharacter(int x, int y, char character) {
-        TerminalSize size = this.getSize();
-        if(size.getColumns() < x || size.getRows() < y) {
-            return false;
+        synchronized (frameUpdates) {
+            TerminalSize size = this.getSize();
+            if(size.getColumns() < x || size.getRows() < y) {
+                return false;
+            }
+
+            frameUpdates.addLast(new CharacterUpdate(character, x, y));
         }
-        
-        frameUpdates.addLast(new CharacterUpdate(character, x, y));
         
         return true;
     }
     
     public boolean setCharacter(CharacterUpdate c) {
-        TerminalSize size = this.getSize();
-        if(size.getColumns() < c.positionX || size.getRows() < c.positionY) {
-            System.out.println("Size out of bounds: X:"+c.positionX+"/"+size.getRows()+"; Y: "+c.positionY+"/"+size.getColumns()+"");
-            return false;
+        synchronized (frameUpdates) {
+            TerminalSize size = this.getSize();
+            if(size.getColumns() < c.positionX || size.getRows() < c.positionY) {
+                System.out.println("Size out of bounds: X:"+c.positionX+"/"+size.getRows()+"; Y: "+c.positionY+"/"+size.getColumns()+"");
+                return false;
+            }
+
+            frameUpdates.addLast(c);
+
+            return true;
         }
-        
-        frameUpdates.addLast(c);
-        
-        return true;
     }
     
     public boolean setMinimumSize(Dimension d) {
@@ -137,7 +142,7 @@ public class TerminalManager extends Thread implements CharacterDelegate {
     }
     
     public void clear() {
-        synchronized (terminal) {
+        synchronized (frameUpdates) {
             frameUpdates.clear();
             terminal.clearScreen();
         }
@@ -170,21 +175,29 @@ public class TerminalManager extends Thread implements CharacterDelegate {
     
     protected void updateWindow() {
         CharacterUpdate c;
-        while(!frameUpdates.isEmpty()) {
-            c = frameUpdates.pop();
-            
-            synchronized (terminal) {
-                terminal.moveCursor(c.positionX, c.positionY);
-                
-                if(c.foregroundColor != null) {
-                    terminal.applyBackgroundColor(c.foregroundColor);
-                }
+        synchronized (frameUpdates) {
+            while(!frameUpdates.isEmpty()) {
+                c = frameUpdates.pop();
 
-                if(c.backgroundColor != null) {
-                    terminal.applyBackgroundColor(c.backgroundColor);
-                }
+                synchronized (terminal) {
+                    terminal.moveCursor(c.positionX, c.positionY);
 
-                terminal.putCharacter(c.character);
+                    //System.out.println(c);
+                    
+                    if(c.foregroundColor != null) {
+                        terminal.applyForegroundColor(c.foregroundColor);
+                    } else {
+                        terminal.applyForegroundColor(Color.WHITE);
+                    }
+
+                    if(c.backgroundColor != null) {
+                        terminal.applyBackgroundColor(c.backgroundColor);
+                    } else {
+                        terminal.applyBackgroundColor(Color.BLACK);
+                    }
+
+                    terminal.putCharacter(c.character);
+                }
             }
         }
     }

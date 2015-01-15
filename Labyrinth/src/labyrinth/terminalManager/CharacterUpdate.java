@@ -30,7 +30,27 @@ public class CharacterUpdate {
         this.character = character;
         this.positionX = positionX;
         this.positionY = positionY;
+        
+
         this.foregroundColor = foreground;
+        
         this.backgroundColor = background;
+    }
+    
+    @Override
+    public String toString() {
+        String s = "Character: " + this.character +  
+                "; X: " + this.positionX + 
+                "; Y: " + this.positionY;
+        
+        if(foregroundColor != null) {
+            s += "; Foreground: " + foregroundColor.toString();
+        }
+        
+        if(backgroundColor != null) {
+            s += "; Background: " + backgroundColor.toString();
+        }
+        
+        return s;
     }
 }

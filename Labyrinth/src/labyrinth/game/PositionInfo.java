@@ -10,17 +10,17 @@ package labyrinth.game;
  *
  * @author D
  */
-public class SizeInfo {
-    public int height;
-    public int width;
+public class PositionInfo {
+    public int x;
+    public int y;
     
-    public SizeInfo(int width, int height) {
-        this.width = width;
-        this.height = height;
+    public PositionInfo(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
     
     @Override
     public String toString() {
-        return "Width: " + width + "; Height: " + height;
+        return "X: " + x + "; Y: " + y;
     }
 }

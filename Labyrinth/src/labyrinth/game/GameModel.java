@@ -57,12 +57,17 @@ public class GameModel {
     boolean playerCreated = false;
     
     /**
+     * player position.
+     */
+    PositionInfo playerPosition;
+    
+    /**
      * 
      * generates a GameModel with Properties-File.
      * @param file 
      */
     
-    public GameModel(String file) throws GameFileNotFoundOrMalformedException {
+    public GameModel(String file) throws Exception {
         this.filename = file;   
         
         this.load();
@@ -86,6 +91,43 @@ public class GameModel {
         if(props.getProperty("hasKey") == "true") {
             this.inventory.add(new Key());
         }
+        
+        createPlayer();
+    }
+    
+    public void createPlayer() throws Exception {
+        if(!playerCreated) {
+            playerCreated = true;
+            
+            PositionInfo e = getFirstEntrance();
+            if(e == null) {
+                 throw new Exception("Could not place Player. No Entrance found.");
+            }
+            
+            if(e.y > 1 && matrix[e.x][e.y + 1] == null) {
+                
+                e.y = e.y + 1;
+                matrix[e.x][e.y] = new Player();
+                playerPosition = e;
+            } else if(matrix[e.x + 1][e.y] == null) {
+                e.x = e.x + 1;
+                matrix[e.x][e.y] = new Player();
+                playerPosition = e;
+            } else {
+                throw new Exception("Could not place Player. No Valid position found." + e);
+            }
+        }
+    }
+    
+    public PositionInfo getFirstEntrance() {
+         for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                if(matrix[i][j] instanceof Eingang) {
+                    return new PositionInfo(i, j);
+                }
+            }
+         }
+         return null;
     }
     
     public void debug() {
@@ -181,13 +223,13 @@ public class GameModel {
         // get height and width
         while(names.hasMoreElements()) {
             String n = names.nextElement();
-            SizeInfo position = extractPositionFromString(n);
+            PositionInfo position = extractPositionFromString(n);
             
             try {
                 // check if can be treated as integer
                 Integer.parseInt(props.getProperty(n));
 
-                level[position.height][position.width] = props.getProperty(n).trim();
+                level[position.x][position.y] = props.getProperty(n).trim();
             } catch(Exception e) {
                 
             }
@@ -222,16 +264,16 @@ public class GameModel {
         // get height and width
         while(names.hasMoreElements()) {
             String n = names.nextElement();
-            SizeInfo position = extractPositionFromString(n);
+            PositionInfo position = extractPositionFromString(n);
             
             // check if this is currently "out of bounds"
             if(position != null) {
-                if(position.width + 1 > width) {
-                    width = position.width + 1;
+                if(position.x + 1 > width) {
+                    width = position.x + 1;
                 }
                 
-                if(position.height + 1 > height) {
-                    height = position.height + 1;
+                if(position.y + 1 > height) {
+                    height = position.y + 1;
                 }
             }
         }
@@ -239,31 +281,19 @@ public class GameModel {
         return new SizeInfo(width, height);
     }
     
-    public static SizeInfo extractPositionFromString(String s) {
-        if(s.indexOf(',') != -1) {
-            String w = s.substring(0, s.indexOf(',') - 1);
-            String h = s.substring(s.indexOf(',') + 1);
+    public static PositionInfo extractPositionFromString(String s) {
+        String[] data = s.split(",");
+        if(data.length == 2) {
             try {
-                int wi = Integer.parseInt(w);
-                int hi = Integer.parseInt(h);
+                int wi = Integer.parseInt(data[0]);
+                int hi = Integer.parseInt(data[1]);
 
-                return new SizeInfo(wi, hi);
+                return new PositionInfo(wi, hi);
             } catch(Exception e) {
-
+                e.printStackTrace();
             }
-
         }
         
         return null;
-    }
-}
-
-class GameFileNotFoundOrMalformedException extends Exception {
-    public GameFileNotFoundOrMalformedException(String file) {
-        super("The Properties-File of the Game was not found: " + file);
-    }
-    
-    public GameFileNotFoundOrMalformedException(String file, boolean malformed) {
-        super("The Properties-File of the Game is malformed: " + file);
     }
 }

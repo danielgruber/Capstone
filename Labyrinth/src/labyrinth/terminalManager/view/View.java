@@ -49,7 +49,7 @@ abstract public class View extends Thread {
     /**
      * called by ViewManager when the window size updates.
      */
-    void windowSizeUpdated(int rows, int columns) {
+    protected void windowSizeUpdated(int rows, int columns) {
         this.rowsVisible = rows;
         this.columnsVisible = columns;
         

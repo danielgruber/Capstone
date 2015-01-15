@@ -20,6 +20,10 @@ abstract public class GameObject {
     public final static int CANNOT_GO = -5;
     
     public static GameObject generate_object(String info) {
+        if(info == null) {
+            return null;
+        }
+        
         if(info.equals("")) {
             return null;
         }
