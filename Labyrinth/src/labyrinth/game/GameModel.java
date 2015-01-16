@@ -104,14 +104,15 @@ public class GameModel {
                  throw new PlayerNotFoundException(" No Entrance found.");
             }
             
+            Player p = new Player();
+            
+            
             if(e.x > 1 && matrix[e.x][e.y + 1] == null) {
                 e.y = e.y + 1;
-                matrix[e.x][e.y] = new Player();
-                playerPosition = e;
+                insertPlayer(e, p);
             } else if(matrix[e.x + 1][e.y] == null) {
                 e.x = e.x + 1;
-                matrix[e.x][e.y] = new Player();
-                playerPosition = e;
+                insertPlayer(e, p);
             } else {
                throw new PlayerNotFoundException(" No Valid position found." + e);
             }
@@ -120,8 +121,46 @@ public class GameModel {
         }
     }
     
+    public void insertPlayer(PositionInfo pos, Player p) {
+        this.dynamicObjects.add(p);
+        
+        matrix[pos.x][pos.y] = p;
+                
+        p.x = pos.x;
+        p.y = pos.y;
+
+        playerPosition = pos;
+    }
+    
     public PositionInfo getFirstEntrance() {
         return getEntrance(0);
+    }
+    
+    public PositionInfo getTopLeftByPlayer(SizeInfo size) {
+        int left = Math.max(0, (int) Math.round(playerPosition.x - size.width / 2));
+        int top = Math.max(0, (int) Math.round(playerPosition.y - size.height / 2));
+        
+        return new PositionInfo(left, top);
+    }
+    
+    public boolean isPlayerWithinSafeArea(PositionInfo topLeft, SizeInfo size, int safeBorder) {
+        if(topLeft.x + safeBorder > playerPosition.x) {
+            return false;
+        }
+        
+        if(topLeft.x + size.width - safeBorder < playerPosition.x) {
+            return false;
+        }
+        
+        if(topLeft.y + safeBorder > playerPosition.y) {
+            return false;
+        }
+        
+        if(topLeft.y + size.height - safeBorder < playerPosition.y) {
+            return false;
+        }
+        
+        return true;
     }
     
     public PositionInfo getEntrance(int e) {
@@ -214,7 +253,7 @@ public class GameModel {
         matrix = new GameObject[level.length][level[0].length];
         for(int k = 0; k < level.length; k++) {
             for(int l = 0; l < level[k].length; l++) {
-                matrix[k][l] = GameObject.generate_object(level[k][l]);
+                matrix[k][l] = GameObject.generate_object(level[k][l], k, l);
                 
                 if(matrix[k][l] instanceof DynamicGameObject) {
                     dynamicObjects.add((DynamicGameObject) matrix[k][l]);
@@ -223,6 +262,7 @@ public class GameModel {
                 if(matrix[k][l] instanceof Player) {
                     players++;
                     playerCreated = true;
+                    playerPosition = new PositionInfo(k, l);
                 }
             }
         }

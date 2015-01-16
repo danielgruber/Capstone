@@ -5,8 +5,6 @@
  */
 package labyrinth;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import labyrinth.game.GameFileNotFoundOrMalformedException;
@@ -16,8 +14,6 @@ import labyrinth.game.GameModel;
 import labyrinth.game.GameView;
 import labyrinth.game.GameViewDelegate;
 import labyrinth.terminalManager.TerminalManager;
-import labyrinth.terminalManager.TerminalWriter;
-import labyrinth.terminalManager.WindowDelegate;
 import labyrinth.terminalManager.view.ViewManager;
 
 /**
@@ -134,5 +130,4 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
     public void wantsToMenu() {
         showMenu();
     }
-    
 }

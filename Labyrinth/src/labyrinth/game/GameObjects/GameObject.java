@@ -19,7 +19,7 @@ abstract public class GameObject {
     public final static int WIN_WHEN_KEY = -4;
     public final static int CANNOT_GO = -5;
     
-    public static GameObject generate_object(String info) {
+    public static GameObject generate_object(String info, int x, int y) {
         if(info == null) {
             return null;
         }
@@ -41,7 +41,10 @@ abstract public class GameObject {
         }
         
         if(info.equals("4")) {
-            return new DynamicMonster();
+            DynamicMonster m = new DynamicMonster();
+            m.x = x;
+            m.y = y;
+            return m;
         }
         
         if(info.equals("5")) {
@@ -49,11 +52,18 @@ abstract public class GameObject {
         }
         
         if(info.equals("6")) {
-            return new Player();
+            Player p = new Player();
+            p.x = x;
+            p.y = y;
+            return p;
         }
         
         return new Wall();
     } 
+    
+    public static GameObject generate_object(String info) {
+        return generate_object(info, -1, -1);
+    }
     
     /**
      * returns the character that is represented by the game object.

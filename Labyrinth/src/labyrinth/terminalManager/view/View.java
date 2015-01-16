@@ -30,12 +30,22 @@ abstract public class View extends Thread {
      */
     protected int rowsVisible;
     
+    
     /**
      * delegate to character updates.
      */
     public CharacterDelegate characterDelegate;
     
-    private boolean isVisible = false;
+    
+    /**
+     * if the view is active.
+     */
+    protected boolean isActive = true;
+    
+    /**
+     * if the view is visible.
+     */
+    protected boolean isVisible = false;
     
     abstract public ViewCharacter[][] getCompleteView(int rows, int columns);
     
@@ -56,7 +66,7 @@ abstract public class View extends Thread {
         System.out.println("Size updated: " + rows + "x" + columns);
     }
     
-    void setVisible(boolean visiblity) {
+    public void setVisible(boolean visiblity) {
         isVisible = visiblity;
     }
     
@@ -108,9 +118,16 @@ abstract public class View extends Thread {
     public boolean setCharacterLine(ViewCharacter[] arr, int y, int x) {
         boolean good = true;
         for(int i = 0; i < arr.length; i++) {
-            CharacterUpdate c = getCharacterUpdate(x + i, y, arr[i].getCharacter(), arr[i].foregroundColor, arr[i].backgroundColor);
-            if(!this.setCharacter(c)) {
-                good = false;
+            
+            if(arr[i] != null) {
+                CharacterUpdate c = getCharacterUpdate(x + i, y, arr[i].getCharacter(), arr[i].foregroundColor, arr[i].backgroundColor);
+                if(!this.setCharacter(c)) {
+                    good = false;
+                }
+            } else {
+                if(!this.setCharacter(x + i, y, ' ')) {
+                    good = false;
+                }
             }
         }
         return good;
@@ -134,8 +151,18 @@ abstract public class View extends Thread {
         return characterDelegate.setCharacter(x, y, c);
     }
     
+    public boolean setCharacter(int x, int y, ViewCharacter c) {
+        
+        CharacterUpdate cu = getCharacterUpdate(x, y, c.getCharacter(), c.foregroundColor, c.backgroundColor);
+        return characterDelegate.setCharacter(cu);
+    }
+    
     public boolean setCharacter(CharacterUpdate c) {
         return characterDelegate.setCharacter(c);
+    }
+    
+    public void dispose() {
+        isActive = false;
     }
     
 }

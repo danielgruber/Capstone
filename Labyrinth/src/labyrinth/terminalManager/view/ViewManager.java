@@ -66,6 +66,10 @@ public class ViewManager implements WindowResizeDelegate, CharacterDelegate, Key
             throw new IllegalArgumentException("ViewManager.setView(View v): The View can't be null.");
         }
         
+        if(!v.isActive) {
+            throw new IllegalArgumentException("Given View was disposed. Can't add it.");
+        }
+        
         if(view != null && view.equals(v)) {
             return;
         }

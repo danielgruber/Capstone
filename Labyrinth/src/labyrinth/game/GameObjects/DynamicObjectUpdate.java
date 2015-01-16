@@ -6,6 +6,8 @@
  */
 package labyrinth.game.GameObjects;
 
+import labyrinth.game.PositionInfo;
+
 /**
  *
  * @author D
@@ -21,7 +23,7 @@ public class DynamicObjectUpdate {
      * @param positionX
      * @param positonY
      */
-    public DynamicObjectUpdate(int positionX, int positonY) {
+    public DynamicObjectUpdate(int positionX, int positionY) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.hasMoved = false;
@@ -34,7 +36,7 @@ public class DynamicObjectUpdate {
      * @param positonY
      * @param hasMoved 
      */
-    public DynamicObjectUpdate(int positionX, int positonY, boolean hasMoved) {
+    public DynamicObjectUpdate(int positionX, int positionY, boolean hasMoved) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.hasMoved = hasMoved;
@@ -54,5 +56,17 @@ public class DynamicObjectUpdate {
     public void moveY(int y) {
         positionY = y;
         hasMoved = true;
+    }
+    
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+    
+    public PositionInfo getPosition() {
+        return new PositionInfo(positionX, positionY);
+    }
+    
+    public String toString() {
+        return "X: " + positionX + "; Y: " + positionY;
     }
 }

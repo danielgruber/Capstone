@@ -21,18 +21,22 @@ public class Player extends DynamicGameObject {
     @Override
     public DynamicObjectUpdate moveObject(int positionX, int positionY, Key k) {
         DynamicObjectUpdate d = new DynamicObjectUpdate(positionX, positionY);
-        if(k.getKind() == Kind.ArrowDown) {
-            d.moveY(positionY + 1);
+        
+        if(k != null) {
+            if(k.getKind() == Kind.ArrowDown) {
+                d.moveY(positionY + 1);
+            }
+            if(k.getKind() == Kind.ArrowUp) {
+                d.moveY(positionY - 1);
+            }
+            if(k.getKind() == Kind.ArrowLeft) {
+                d.moveX(positionX - 1);
+            }
+            if(k.getKind() == Kind.ArrowRight) {
+                d.moveX(positionX + 1);
+            }
         }
-        if(k.getKind() == Kind.ArrowUp) {
-            d.moveY(positionY - 1);
-        }
-        if(k.getKind() == Kind.ArrowLeft) {
-            d.moveX(positionX - 1);
-        }
-        if(k.getKind() == Kind.ArrowRight) {
-            d.moveX(positionX + 1);
-        }
+        
         return d;
     }
 

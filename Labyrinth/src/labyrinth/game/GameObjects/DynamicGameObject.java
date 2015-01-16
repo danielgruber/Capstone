@@ -15,6 +15,13 @@ import com.googlecode.lanterna.input.Key;
  * @author D
  */
 abstract public class DynamicGameObject extends GameObject {
+    
+    /**
+     * position is required for this.
+     */
+    public int x;
+    public int y;
+    
     /**
      * is called when the game object should be moved.
      * 
