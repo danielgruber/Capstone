@@ -48,7 +48,7 @@ abstract public class GameObject {
         }
         
         if(info.equals("5")) {
-            return new Key();
+            return new KeyObject();
         }
         
         if(info.equals("6")) {
@@ -72,7 +72,7 @@ abstract public class GameObject {
     
      /**
      * defines action when coliding. The action is called on the object
-     * which is notj in debt of the colision.
+     * which is not in debt of the colision.
      * 
      * possible Actions:
      * 

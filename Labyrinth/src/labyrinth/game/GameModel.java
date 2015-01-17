@@ -89,7 +89,7 @@ public class GameModel {
         
         this.inventory = new InventoryManager();
         if(props.getProperty("hasKey") == "true") {
-            this.inventory.add(new Key());
+            this.inventory.add(new KeyObject());
         }
         
         createPlayer();
@@ -121,6 +121,12 @@ public class GameModel {
         }
     }
     
+    public void setMovableObjectPosition(DynamicGameObject d, PositionInfo pos) {
+        if(d instanceof Player) {
+            this.playerPosition = pos;
+        }
+    }
+    
     public void insertPlayer(PositionInfo pos, Player p) {
         this.dynamicObjects.add(p);
         
@@ -136,31 +142,50 @@ public class GameModel {
         return getEntrance(0);
     }
     
-    public PositionInfo getTopLeftByPlayer(SizeInfo size) {
-        int left = Math.max(0, (int) Math.round(playerPosition.x - size.width / 2));
-        int top = Math.max(0, (int) Math.round(playerPosition.y - size.height / 2));
+    public PositionInfo getTopLeftByPlayer(PositionInfo topLeft, SizeInfo size, int safeBorder) {
+        if(!this.isPlayerWithInSafeAreaX(topLeft, size, safeBorder)) {
+            topLeft.x = Math.max(0, (int) Math.round(playerPosition.x - size.width / 2));
+        }
         
-        return new PositionInfo(left, top);
+        if(!this.isPlayerWithInSafeAreaY(topLeft, size, safeBorder)) {
+            topLeft.y = Math.max(0, (int) Math.round(playerPosition.y - size.height / 2));
+        }
+        
+        return topLeft;
     }
     
-    public boolean isPlayerWithinSafeArea(PositionInfo topLeft, SizeInfo size, int safeBorder) {
-        if(topLeft.x + safeBorder > playerPosition.x) {
-            return false;
-        }
-        
-        if(topLeft.x + size.width - safeBorder < playerPosition.x) {
-            return false;
-        }
-        
-        if(topLeft.y + safeBorder > playerPosition.y) {
-            return false;
-        }
-        
-        if(topLeft.y + size.height - safeBorder < playerPosition.y) {
-            return false;
+    public boolean isPlayerWithInSafeAreaX(PositionInfo topLeft, SizeInfo size, int safeBorder) {
+        if(this.width() > size.width) {
+
+            if(topLeft.x + safeBorder > playerPosition.x) {
+                return false;
+            }
+
+            if(topLeft.x + size.width - safeBorder < playerPosition.x) {
+                return false;
+            }
         }
         
         return true;
+    }
+    
+     public boolean isPlayerWithInSafeAreaY(PositionInfo topLeft, SizeInfo size, int safeBorder) {
+        if(this.height() > size.height) {
+        
+            if(topLeft.y + safeBorder > playerPosition.y) {
+                return false;
+            }
+
+            if(topLeft.y + size.height - safeBorder < playerPosition.y) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    public boolean isPlayerWithinSafeArea(PositionInfo topLeft, SizeInfo size, int safeBorder) {
+        return isPlayerWithInSafeAreaX(topLeft, size, safeBorder) && isPlayerWithInSafeAreaY(topLeft, size, safeBorder);
     }
     
     public PositionInfo getEntrance(int e) {
@@ -203,7 +228,7 @@ public class GameModel {
     public void debug() {
         System.out.println("----");
         System.out.println("lifes: " + this.lifeManager.getLifes());
-        System.out.println("Inventory has key: " + this.inventory.hasItemOfType(Key.class));
+        System.out.println("Inventory has key: " + this.inventory.hasItemOfType(KeyObject.class));
         System.out.println("Map:");
         
         for(int i = 0; i < matrix.length; i++) {

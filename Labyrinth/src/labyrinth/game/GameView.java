@@ -13,6 +13,7 @@ import labyrinth.game.GameObjects.DynamicGameObject;
 import labyrinth.game.GameObjects.DynamicMonster;
 import labyrinth.game.GameObjects.DynamicObjectUpdate;
 import labyrinth.game.GameObjects.GameObject;
+import labyrinth.game.GameObjects.KeyObject;
 import labyrinth.game.GameObjects.Player;
 import labyrinth.terminalManager.KeyboardDelegate;
 import labyrinth.terminalManager.view.View;
@@ -49,6 +50,7 @@ public class GameView extends View implements KeyboardDelegate {
      * linked list for keys.
      */
     LinkedList<Key> keyQueue;
+    boolean hasDrawn = false;
     
     /**
      * constructor.
@@ -73,6 +75,7 @@ public class GameView extends View implements KeyboardDelegate {
         ViewCharacter[][] viewRows = getCompleteGameView(new SizeInfo(columns, rows - StatusBarHeight), calculateTopLeft());
         System.arraycopy(viewRows, 0, view, StatusBarHeight, rows - StatusBarHeight);
     
+        hasDrawn = true;
         
         return view;
     }
@@ -111,16 +114,36 @@ public class GameView extends View implements KeyboardDelegate {
     }
     
     public ViewCharacter[] getStatusBar() {
-        String key = (this.model.inventory.hasItemOfType(Key.class)) ? "Key" : "No Key";
+        String key = (this.model.inventory.hasItemOfType(KeyObject.class)) ? "Key" : "No Key";
         return this.fillCharArray(new ViewCharacter[columnsVisible], 0, "Lifes: " + model.lifeManager.getLifes() + "  Have Key?: " + key);
     }
     
     public void updateTopLeftByPlayer() {
         if(!model.isPlayerWithinSafeArea(new PositionInfo(scrollLeft, scrollTop), new SizeInfo(this.columnsVisible, this.rowsVisible), safeArea)) {
-            PositionInfo p = model.getTopLeftByPlayer(new SizeInfo(this.columnsVisible, this.rowsVisible));
+            
+            //System.out.println("player out of safe area");
+            
+            PositionInfo p = model.getTopLeftByPlayer(new PositionInfo(scrollLeft, scrollTop), new SizeInfo(this.columnsVisible, this.rowsVisible), safeArea);
+            
+            boolean shouldDraw = (scrollLeft != p.x || scrollTop != p.y);
+            
             scrollLeft = p.x;
             scrollTop = p.y;
+            
+            if(hasDrawn && shouldDraw) {
+                //System.out.println("draw view by tl: " + p.toString());
+                drawCompleteView();
+            }
+       
         }
+    }
+    
+    public void drawCompleteView() {
+        ViewCharacter[][] newArea = this.getCompleteGameView(new SizeInfo(this.columnsVisible, this.rowsVisible), new PositionInfo(scrollLeft, scrollTop));
+        for(int i = 0; i < newArea.length; i++) {
+            this.setCharacterLine(newArea[i], i + StatusBarHeight);
+        }
+        hasDrawn = true;
     }
     
     @Override
@@ -146,7 +169,7 @@ public class GameView extends View implements KeyboardDelegate {
     }
     
     protected void win() {
-        
+        System.out.println("win");
     }
     
     public void updateStatusBar() {
@@ -154,7 +177,8 @@ public class GameView extends View implements KeyboardDelegate {
     }
     
     protected boolean checkForColision(GameObject object, GameObject coliding) {
-        int action = object.coliding(coliding);
+        
+        int action = coliding.coliding(object);
         
         if(action == GameObject.CANNOT_GO) {
             return false;
@@ -169,7 +193,7 @@ public class GameView extends View implements KeyboardDelegate {
             updateStatusBar();
             return true;
         } else if(action == GameObject.WIN_WHEN_KEY) {
-            if(model.inventory.hasItemOfType(Key.class)) {
+            if(model.inventory.hasItemOfType(KeyObject.class)) {
                 win();
                 return false;
             } else {
@@ -184,15 +208,26 @@ public class GameView extends View implements KeyboardDelegate {
         model.matrix[object.x][object.y] = null;
         
         PositionInfo newPos = c.getPosition();
-        
-        this.setCharacter(object.x, object.y + StatusBarHeight, ' ');
-        this.setCharacter(newPos.x, newPos.y + StatusBarHeight, object.getCharacter());
+        this.drawGameObject(object.x - scrollLeft, object.y + StatusBarHeight - scrollTop, ' ');
+        this.drawGameObject(newPos.x - scrollLeft, newPos.y + StatusBarHeight - scrollTop, object.getCharacter());
         
         model.matrix[newPos.x][newPos.y] = object;
         object.x = newPos.x;
         object.y = newPos.y;
         
-        
+        model.setMovableObjectPosition(object, new PositionInfo(newPos.x, newPos.y));
+    }
+    
+    public void drawGameObject(int x, int y, ViewCharacter c) {
+        if(y >= StatusBarHeight && x > 0 && y <= this.rowsVisible && x <= this.columnsVisible) {
+            this.setCharacter(x, y, c);
+        }
+    }
+    
+     public void drawGameObject(int x, int y, char c) {
+        if(y >= StatusBarHeight && x > 0 && y < this.rowsVisible && x < this.columnsVisible) {
+            this.setCharacter(x, y, c);
+        }
     }
     
     public void run() {
@@ -211,7 +246,7 @@ public class GameView extends View implements KeyboardDelegate {
                     
                     for(DynamicGameObject object : model.dynamicObjects) {
                         
-                        if(object instanceof Player || loop % 45 == 0) {
+                        if(object instanceof Player || loop % 30 == 0) {
                             DynamicObjectUpdate update = object.moveObject(object.x, object.y, latest);
 
                             

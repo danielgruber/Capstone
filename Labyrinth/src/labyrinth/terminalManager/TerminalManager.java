@@ -119,7 +119,7 @@ public class TerminalManager extends Thread implements CharacterDelegate {
         synchronized (frameUpdates) {
             TerminalSize size = this.getSize();
             if(size.getColumns() < c.positionX || size.getRows() < c.positionY) {
-                System.out.println("Size out of bounds: X:"+c.positionX+"/"+size.getRows()+"; Y: "+c.positionY+"/"+size.getColumns()+"");
+                //System.out.println("Size out of bounds: X:"+c.positionX+"/"+size.getRows()+"; Y: "+c.positionY+"/"+size.getColumns()+"");
                 return false;
             }
 

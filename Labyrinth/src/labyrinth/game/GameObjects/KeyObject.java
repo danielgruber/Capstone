@@ -13,7 +13,7 @@ import labyrinth.terminalManager.view.ViewCharacter;
  *
  * @author D
  */
-public class Key extends GameObject implements InventoryGameObject {
+public class KeyObject extends GameObject implements InventoryGameObject {
 
     
     @Override
@@ -23,9 +23,10 @@ public class Key extends GameObject implements InventoryGameObject {
 
     @Override
     public int coliding(GameObject colidingObject) {
-       if(colidingObject instanceof Player) {
-           return GameObject.COLLECT;
-       }
+        System.out.println("colide");
+        if(colidingObject instanceof Player) {
+            return GameObject.COLLECT;
+        }
        
        return GameObject.CANNOT_GO;
     }
