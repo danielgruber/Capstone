@@ -55,8 +55,8 @@ public class GameMenu extends View implements KeyboardDelegate {
         ViewCharacter[][] view = createViewMatrix(rows, columns);
         
         topPos = (rowsVisible - 10) / 2;
-        view[topPos] = fillLineWithAlignCenter(view[topPos], "What do you want to do?");
-        view[topPos + 1] = fillLineWithAlignCenter(view[topPos + 1], "");
+        fillLineWithAlignCenter(view[topPos], "What do you want to do?");
+        fillLineWithAlignCenter(view[topPos + 1], "");
         
         int[] menuKeys = getMenuKeys();
         String[] menuLabels = getMenuLabels();

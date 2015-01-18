@@ -23,7 +23,7 @@ import labyrinth.terminalManager.view.ViewCharacter;
  *
  * @author D
  */
-public class GameView extends View implements KeyboardDelegate {
+public class GameView extends View implements KeyboardDelegate, LifeManagerDelegate {
 
     public GameViewDelegate delegate;
     
@@ -62,6 +62,7 @@ public class GameView extends View implements KeyboardDelegate {
         
         this.keyQueue = new LinkedList();
         this.model = model;
+        model.lifeManager.delegate = this;
     }
     
     @Override
@@ -170,6 +171,16 @@ public class GameView extends View implements KeyboardDelegate {
     
     protected void win() {
         System.out.println("win");
+        if(this.delegate != null) {
+            this.delegate.won();
+        }
+    }
+    
+    protected void lost() {
+        System.out.println("lost");
+        if(this.delegate != null) {
+            this.delegate.lost();
+        }
     }
     
     public void updateStatusBar() {
@@ -279,6 +290,16 @@ public class GameView extends View implements KeyboardDelegate {
                 } catch(Exception e) {}
             }
         }
+    }
+
+    @Override
+    public void allLifesLost() {
+        this.lost();
+    }
+
+    @Override
+    public void lifeUpdate(int lifes) {
+        this.updateStatusBar();
     }
     
 }

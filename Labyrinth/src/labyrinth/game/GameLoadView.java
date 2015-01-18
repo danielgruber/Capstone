@@ -95,4 +95,10 @@ public class GameLoadView extends View implements KeyboardDelegate {
             delegate.loadFile(n);
         }
     }
+    
+    @Override
+    protected void windowSizeUpdated(int rows, int columns) {
+        super.windowSizeUpdated(rows, columns);
+        topPos = (rowsVisible - 10) / 2;
+    }
 }

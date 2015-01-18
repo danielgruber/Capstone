@@ -18,7 +18,7 @@ import labyrinth.game.GameObjects.*;
  *
  * @author D
  */
-public class GameModel {
+public class GameModel  {
     /**
      * all game objects.
      */

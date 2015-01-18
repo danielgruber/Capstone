@@ -13,6 +13,8 @@ import labyrinth.game.GameLoadView;
 import labyrinth.game.GameModel;
 import labyrinth.game.GameView;
 import labyrinth.game.GameViewDelegate;
+import labyrinth.message.Message;
+import labyrinth.message.MessageDelegate;
 import labyrinth.terminalManager.TerminalManager;
 import labyrinth.terminalManager.view.ViewManager;
 
@@ -20,7 +22,7 @@ import labyrinth.terminalManager.view.ViewManager;
  *
  * @author D
  */
-public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDelegate {
+public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDelegate, MessageDelegate {
 
     /**
      * managers for terminal and views.
@@ -129,5 +131,21 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
     @Override
     public void wantsToMenu() {
         showMenu();
+    }
+
+    @Override
+    public void won() {
+        Message win = new Message("win", "congratulations!");
+        inGame = false;
+        win.delegate = this;
+        this.viewManager.setView(win);
+    }
+
+    @Override
+    public void lost() {
+        Message lose = new Message("lose", ":-(");
+        inGame = false;
+        lose.delegate = this;
+        this.viewManager.setView(lose);
     }
 }

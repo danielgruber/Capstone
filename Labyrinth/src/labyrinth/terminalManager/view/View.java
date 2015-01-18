@@ -91,7 +91,7 @@ abstract public class View extends Thread {
      * @return 
      */
     public ViewCharacter[] fillCharArray(ViewCharacter[] arr, int pos, String s) {
-        for(int i = 0; i < s.length(); i++) {
+        for(int i = 0; i < s.length() && i < arr.length; i++) {
             arr[i + pos] = new ViewCharacter(s.charAt(i));
         }
         return arr;
@@ -116,6 +116,7 @@ abstract public class View extends Thread {
     }
     
     public boolean setCharacterLine(ViewCharacter[] arr, int y, int x) {
+        
         boolean good = true;
         for(int i = 0; i < arr.length; i++) {
             
@@ -148,17 +149,29 @@ abstract public class View extends Thread {
     }
     
     public boolean setCharacter(int x, int y, char c) {
-        return characterDelegate.setCharacter(x, y, c);
+        if(this.isVisible) {
+            return characterDelegate.setCharacter(x, y, c);
+        }
+        
+        return false;
     }
     
     public boolean setCharacter(int x, int y, ViewCharacter c) {
         
-        CharacterUpdate cu = getCharacterUpdate(x, y, c.getCharacter(), c.foregroundColor, c.backgroundColor);
-        return characterDelegate.setCharacter(cu);
+        if(this.isVisible) {
+        
+            CharacterUpdate cu = getCharacterUpdate(x, y, c.getCharacter(), c.foregroundColor, c.backgroundColor);
+            return characterDelegate.setCharacter(cu);
+        }
+        
+        return false;
     }
     
     public boolean setCharacter(CharacterUpdate c) {
-        return characterDelegate.setCharacter(c);
+        if(this.isVisible) {
+            return characterDelegate.setCharacter(c);
+        }
+        return false;
     }
     
     public void dispose() {
