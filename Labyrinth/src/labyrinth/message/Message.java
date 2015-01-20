@@ -102,6 +102,8 @@ public class Message extends View implements KeyboardDelegate {
             fillLineWithAlignCenter(view[topPos + 13], messageDetails);
         }
         
+        fillLineWithAlignCenter(view[topPos + 15], "Press enter or esacpe to continue.");
+        
         return view;
     }
     

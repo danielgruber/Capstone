@@ -6,6 +6,7 @@
  */
 package labyrinth.game.GameObjects;
 
+import com.googlecode.lanterna.terminal.Terminal.Color;
 import labyrinth.terminalManager.view.ViewCharacter;
 
 /**
@@ -17,7 +18,9 @@ public class StaticMonster extends GameObject {
     
     @Override
     public ViewCharacter getCharacter() {
-        return new ViewCharacter('M');
+        ViewCharacter c = new ViewCharacter('M');
+        c.foregroundColor = Color.RED;
+        return c;
     }
 
     @Override

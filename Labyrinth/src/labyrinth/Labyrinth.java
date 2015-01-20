@@ -5,6 +5,7 @@
  */
 package labyrinth;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import labyrinth.game.GameFileNotFoundOrMalformedException;
@@ -100,9 +101,35 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
             viewManager.setView(gameView);
         } else if(action == GameMenu.SHOW_LEGEND) {
             
+        } else if(action == GameMenu.GAME_NEW) {
+            generateLevelAndLoad();
         }
     }
 
+    // adds numbers at the end of the file.
+    public String getFileName(String start, String ext) {
+        if(!fileExists(start + "." + ext)) {
+            return start + "." + ext;
+        }
+        
+        int i = 0; 
+        while(fileExists(start + "-" + i + "." + ext)) {
+            i++;
+        }
+        return start + "-" + i + "." + ext;
+    }
+    
+    public boolean fileExists(String f) {
+        File file = new File(f);
+        return file.exists();
+    }
+    
+    public void generateLevelAndLoad() {
+        String file = getFileName("generated", "properties");
+        Generator.generate(false, file);
+        loadFile(file, true);
+    }
+    
     /**
      * delegate of GameLoadView.
      */
@@ -111,17 +138,25 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
         viewManager.setView(menu);
     }
     
-    @Override
-    public void loadFile(String filename) {
+    public void loadFile(String filename, boolean removeWhenWon) {
         try {
             GameModel m = loadGameModel(filename);
+            m.removeWhenWon = removeWhenWon;
             GameView v = loadGameViewWithModel(m);
             v.delegate = this;
             viewManager.setView(v);
             inGame = true;
         } catch (Exception ex) {
             Logger.getLogger(Labyrinth.class.getName()).log(Level.SEVERE, null, ex);
+            Message exception = new Message("exception", "Could not load file. It does not exist or is corrupted.");
+            exception.delegate = this;
+            viewManager.setView(exception);
         }
+    }
+    
+    @Override
+    public void loadFile(String filename) {
+        loadFile(filename, false);
     }
     
     /**
@@ -134,7 +169,7 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
     }
 
     @Override
-    public void won() {
+    public void won(String f) {
         Message win = new Message("win", "congratulations!");
         inGame = false;
         win.delegate = this;
@@ -142,7 +177,7 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
     }
 
     @Override
-    public void lost() {
+    public void lost(String f) {
         Message lose = new Message("lose", ":-(");
         inGame = false;
         lose.delegate = this;

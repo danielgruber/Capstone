@@ -66,7 +66,16 @@ public class DynamicObjectUpdate {
         return new PositionInfo(positionX, positionY);
     }
     
+    @Override
     public String toString() {
         return "X: " + positionX + "; Y: " + positionY;
+    }
+    
+    public boolean equals(DynamicObjectUpdate d) {
+        if(d == null) {
+            return false;
+        }
+        
+        return d.positionX == this.positionX && d.positionY == this.positionY;
     }
 }

@@ -6,8 +6,11 @@
  */
 package labyrinth.game;
 
+import com.googlecode.lanterna.input.Key;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -62,6 +65,11 @@ public class GameModel  {
     PositionInfo playerPosition;
     
     /**
+     * remove level when won.
+     */
+    public boolean removeWhenWon = false;
+    
+    /**
      * 
      * generates a GameModel with Properties-File.
      * @param file 
@@ -72,7 +80,13 @@ public class GameModel  {
         
         this.load();
         if(props != null) {
-            this.setLevel(loadLevelChunks(props));
+            
+            // get chunks of level
+            String[][] levelChunks = loadLevelChunks(props);
+            
+            // generate Objects for level
+            this.setLevel(levelChunks);
+
         } else {
             throw new GameFileNotFoundOrMalformedException(file);
         }
@@ -93,6 +107,8 @@ public class GameModel  {
         }
         
         createPlayer();
+        
+        //debug();
     }
     
     public void createPlayer() throws Exception {
@@ -257,6 +273,7 @@ public class GameModel  {
         
         try {
             props.load(in);
+            in.close();
         } catch(IOException e) {
             throw new GameFileNotFoundOrMalformedException(this.filename, true);
         }
@@ -302,6 +319,8 @@ public class GameModel  {
     public static String[][] loadLevelChunks(Properties props) {
         SizeInfo size = getHeightAndWidth(props);
         
+        System.out.println("Size of Level: " + size);
+        
         return fillArrayWithValues(size, props);
     }
     
@@ -313,7 +332,7 @@ public class GameModel  {
      * @return 
      */
     protected static String[][] fillArrayWithValues(SizeInfo size, Properties props) {
-        String[][] level = new String[size.height][size.width];
+        String[][] level = new String[size.width][size.height];
         
         Enumeration<String> names = (Enumeration<String>) props.propertyNames();
         // get height and width
@@ -391,5 +410,50 @@ public class GameModel  {
         }
         
         return null;
+    }
+    
+    public void removeFile() {
+        File f = new File(this.filename);
+        f.delete();
+    }
+    
+    public String getFilename() {
+        return this.filename;
+    }
+    
+    public boolean save(String toFile) {
+        
+        Properties prop = new Properties();
+        
+        prop.setProperty("Height", "" + matrix[0].length);
+        prop.setProperty("Width", "" + matrix.length);
+        prop.setProperty("lifes", "" + this.lifeManager.getLifes());
+        prop.setProperty("hasKey", this.inventory.hasItemOfType(Key.class) ? "true" : "false");
+        
+        for(int x = 0; x < matrix.length; x++) {
+            for(int y = 0; y < matrix[0].length; y++) {
+                if(matrix[x][y] != null) {
+                    prop.setProperty(x + "," + y, matrix[x][y].getPropertyRepresentation());
+                }
+            }
+        }
+        
+        if(!toFile.equals(this.filename)) {
+            this.removeFile();
+        }
+        
+        try {
+            FileOutputStream fileOut = new FileOutputStream(new File(toFile));
+            prop.store(fileOut, "Save! :D");
+            fileOut.close();
+            
+            this.filename = toFile;
+            
+            
+            return true;
+        } catch(Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

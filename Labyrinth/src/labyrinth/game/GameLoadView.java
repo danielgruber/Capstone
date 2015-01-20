@@ -18,87 +18,28 @@ import labyrinth.terminalManager.view.ViewCharacter;
  *
  * @author D
  */
-public class GameLoadView extends View implements KeyboardDelegate {
+public class GameLoadView extends InputField {
+
+    String message = "Type Filename to load. Default is level.properties.";
+    String secondMessage = "Folder is the folder in which you launched the program.";
+
+    /**
+     * Delegate.
+     */
+    public GameLoadDelegate delegate;
 
     
-    
-    int topPos;
-    boolean d = true;
-    String currentName = "level.properties";
-    public GameLoadDelegate delegate;
-    
-    @Override
-    public ViewCharacter[][] getCompleteView(int rows, int columns) {
-        ViewCharacter[][] view = createViewMatrix(rows, columns);
-        
-        topPos = (rowsVisible - 10) / 2;
-        
-        fillLineWithAlignCenter(view[topPos], "Type Filename to load. Default is level.properties.");
-        fillLineWithAlignCenter(view[topPos + 1], "Folder is the folder in which you launched the program.");
-        
-        fillLineWithAlignCenter(view[topPos + 3], currentName);
-        for(int i = 0; i < view[topPos + 3].length; i++) {
-            if(view[topPos + 3][i] != null) {
-                view[topPos + 3][i].foregroundColor = Color.BLACK;
-                view[topPos + 3][i].backgroundColor = Color.WHITE;
-            }
-        }
-        
-        return view;
-    }
-    
-    @Override
-    public void keyPressed(Key key) {
-        if(key.getKind() == Kind.Enter) {
-            load();
-        } else if(key.getKind() == Kind.Escape) {
-            if(delegate != null) {
-                delegate.cancelLoading();
-            }
-        } else if(  key.getKind() != Kind.Backspace && 
-                    key.getKind() != Kind.ArrowDown && 
-                    key.getKind() != Kind.ArrowLeft && 
-                    key.getKind() != Kind.ArrowUp && 
-                    key.getKind() != Kind.ArrowRight) {
-            
-            if(d == true) {
-                d = false;
-                currentName = "";
-            }
-            
-            if(currentName.length() < 40) {
-                currentName += key.getCharacter();
-            }
-            
-            printName();
-        } else if(key.getKind() == Kind.Backspace) {
-            if(currentName.length() > 0) {
-                currentName = currentName.substring(0, currentName.length() - 1);
-            }
-            printName();
-        }
-    }
-    
-    public void printName() {
-        ViewCharacter[] line = fillLineWithAlignCenter(new ViewCharacter[this.columnsVisible], currentName);
-        for(ViewCharacter c : line) {
-            c.backgroundColor = Color.BLACK;
-            c.foregroundColor = Color.WHITE;
-        }
-        this.setCharacterLine(line, topPos + 3);
-    }
-    
-    public void load() {
+    public void submit(String name) {
         if(delegate != null) {
-            
-            String n = currentName.equals("") ?  "level.properties" : currentName;
-            delegate.loadFile(n);
+            delegate.loadFile(name);
         }
     }
-    
+
     @Override
-    protected void windowSizeUpdated(int rows, int columns) {
-        super.windowSizeUpdated(rows, columns);
-        topPos = (rowsVisible - 10) / 2;
+    public void cancel() {
+       if(delegate != null) {
+           this.delegate.cancelLoading();
+       }
     }
+    
 }

@@ -17,7 +17,7 @@ public class Eingang extends GameObject {
     
     @Override
     public ViewCharacter getCharacter() {
-        ViewCharacter c = new ViewCharacter(' ');
+        ViewCharacter c = new ViewCharacter('\u21df');
         c.backgroundColor = Terminal.Color.YELLOW;
         return c;
     }

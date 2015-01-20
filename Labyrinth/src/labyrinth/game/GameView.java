@@ -10,7 +10,6 @@ import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.Key.Kind;
 import java.util.LinkedList;
 import labyrinth.game.GameObjects.DynamicGameObject;
-import labyrinth.game.GameObjects.DynamicMonster;
 import labyrinth.game.GameObjects.DynamicObjectUpdate;
 import labyrinth.game.GameObjects.GameObject;
 import labyrinth.game.GameObjects.KeyObject;
@@ -51,6 +50,11 @@ public class GameView extends View implements KeyboardDelegate, LifeManagerDeleg
      */
     LinkedList<Key> keyQueue;
     boolean hasDrawn = false;
+    
+    /**
+     * if you hit a monster the following Updates should be prevented.
+     */
+    protected DynamicObjectUpdate last;
     
     /**
      * constructor.
@@ -171,15 +175,20 @@ public class GameView extends View implements KeyboardDelegate, LifeManagerDeleg
     
     protected void win() {
         System.out.println("win");
+        
+        if(this.model.removeWhenWon) {
+            this.model.removeFile();
+        }
+        
         if(this.delegate != null) {
-            this.delegate.won();
+            this.delegate.won(this.model.getFilename());
         }
     }
     
     protected void lost() {
         System.out.println("lost");
         if(this.delegate != null) {
-            this.delegate.lost();
+            this.delegate.lost(this.model.getFilename());
         }
     }
     
@@ -257,16 +266,24 @@ public class GameView extends View implements KeyboardDelegate, LifeManagerDeleg
                     
                     for(DynamicGameObject object : model.dynamicObjects) {
                         
-                        if(object instanceof Player || loop % 30 == 0) {
+                        if(object instanceof Player || loop % 15 == 0) {
                             DynamicObjectUpdate update = object.moveObject(object.x, object.y, latest);
 
                             
                             
                             if(update.hasMoved()) {
-                                PositionInfo p = update.getPosition();
+                                
+                                if(!(object instanceof Player) || !update.equals(last)) {
+                                    PositionInfo p = update.getPosition();
 
-                                if(model.matrix[p.x][p.y] == null || checkForColision(object, model.matrix[p.x][p.y])) {
-                                    moveObject(object, update);
+                                    // put last update in attribute
+                                    if(object instanceof Player) {
+                                        last = update;
+                                    }
+
+                                    if(model.matrix[p.x][p.y] == null || checkForColision(object, model.matrix[p.x][p.y])) {
+                                        moveObject(object, update);
+                                    }
                                 }
 
                             }
@@ -283,6 +300,9 @@ public class GameView extends View implements KeyboardDelegate, LifeManagerDeleg
                     sleep(16);
                 } catch(Exception e) {}
             } else {
+                
+                // give user a little bit more time after resume.
+                loop = 0;
                 
                 // sleep a while until view is visible.
                 try {

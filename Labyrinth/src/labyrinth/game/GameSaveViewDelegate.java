@@ -10,8 +10,7 @@ package labyrinth.game;
  *
  * @author D
  */
-public interface GameViewDelegate {
-    public void wantsToMenu();
-    public void won(String file);
-    public void lost(String file);
+public interface GameSaveViewDelegate {
+    public void save(String filename);
+    public void continueGame();
 }

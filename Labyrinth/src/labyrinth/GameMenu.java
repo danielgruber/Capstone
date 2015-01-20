@@ -54,6 +54,8 @@ public class GameMenu extends View implements KeyboardDelegate {
     public ViewCharacter[][] getCompleteView(int rows, int columns) {
         ViewCharacter[][] view = createViewMatrix(rows, columns);
         
+        arrowPos = (this.columnsVisible - 20) / 2;
+        
         topPos = (rowsVisible - 10) / 2;
         fillLineWithAlignCenter(view[topPos], "What do you want to do?");
         fillLineWithAlignCenter(view[topPos + 1], "");
@@ -110,6 +112,9 @@ public class GameMenu extends View implements KeyboardDelegate {
     }
     
     public void arrowUp() {
+        
+        
+        
         if(position > 0) {
             position--;
             moveArrow(topPos + 3 + position, topPos + 2 + position);
@@ -148,6 +153,7 @@ public class GameMenu extends View implements KeyboardDelegate {
     protected void windowSizeUpdated(int rows, int columns) {
         super.windowSizeUpdated(rows, columns);
         topPos = (rowsVisible - 10) / 2;
+        arrowPos = (this.columnsVisible - 20) / 2;
     }
 }
 

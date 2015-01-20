@@ -7,6 +7,8 @@
 package labyrinth.game.GameObjects;
 
 import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.Terminal.Color;
 import labyrinth.terminalManager.view.ViewCharacter;
 
 /**
@@ -18,7 +20,9 @@ public class DynamicMonster extends DynamicGameObject {
     
     @Override
     public ViewCharacter getCharacter() {
-        return new ViewCharacter('M');
+        ViewCharacter c = new ViewCharacter('M');
+        c.foregroundColor = Color.RED;
+        return c;
     }
 
     @Override

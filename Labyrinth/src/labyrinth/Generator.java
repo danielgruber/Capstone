@@ -258,8 +258,8 @@ public class Generator {
       } catch (Exception e) {e.printStackTrace();}
    }
 
-   public static void generate(boolean printField, String destFileName) {
-      printField=printField;
+   public static void generate(boolean _printField, String destFileName) {
+      printField=_printField;
       propFileName = destFileName;
       param = new Properties();
       prop = new Properties();
