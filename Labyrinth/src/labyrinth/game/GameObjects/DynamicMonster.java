@@ -59,4 +59,9 @@ public class DynamicMonster extends DynamicGameObject {
     public String getPropertyRepresentation() {
         return "4";
     }
+
+    @Override
+    public String getName() {
+        return "Monster";
+    }
 }

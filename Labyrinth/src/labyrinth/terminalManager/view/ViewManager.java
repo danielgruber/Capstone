@@ -62,6 +62,8 @@ public class ViewManager implements WindowResizeDelegate, CharacterDelegate, Key
     
     public void setView(View v) {
         
+        ViewCharacter[][] info;
+        
         if(v == null) {
             throw new IllegalArgumentException("ViewManager.setView(View v): The View can't be null.");
         }
@@ -82,8 +84,8 @@ public class ViewManager implements WindowResizeDelegate, CharacterDelegate, Key
         view.windowSizeUpdated(getTerminalSize().getRows(), getTerminalSize().getColumns());
         manager.setMinimumSize(view.getMinimumSize());
         
-        ViewCharacter[][] info = view.getCompleteView(getTerminalSize().getRows(), getTerminalSize().getColumns());
         
+        info = view.getCompleteView(getTerminalSize().getRows(), getTerminalSize().getColumns());
         //debugViewInfo(info);
         
         for(int y = 0; y < info.length; y++) {

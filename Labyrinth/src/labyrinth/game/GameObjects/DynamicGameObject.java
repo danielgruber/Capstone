@@ -15,7 +15,6 @@ import com.googlecode.lanterna.input.Key;
  * @author D
  */
 abstract public class DynamicGameObject extends GameObject {
-    
     /**
      * position is required for this.
      */

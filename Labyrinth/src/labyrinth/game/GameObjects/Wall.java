@@ -21,6 +21,7 @@ public class Wall extends GameObject {
     public ViewCharacter getCharacter() {
         ViewCharacter c = new ViewCharacter(' ');
         c.backgroundColor = Color.WHITE;
+        c.foregroundColor = Color.BLACK;
         return c;
     }
 
@@ -32,6 +33,11 @@ public class Wall extends GameObject {
     @Override
     public String getPropertyRepresentation() {
         return "0";
+    }
+
+    @Override
+    public String getName() {
+        return "Wall";
     }
     
 }

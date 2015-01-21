@@ -8,7 +8,6 @@ package labyrinth.game.GameObjects;
 
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.Key.Kind;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.Terminal.Color;
 import labyrinth.terminalManager.view.ViewCharacter;
 
@@ -60,6 +59,11 @@ public class Player extends DynamicGameObject {
     @Override
     public String getPropertyRepresentation() {
         return "6";
+    }
+
+    @Override
+    public String getName() {
+        return "Player";
     }
     
 }

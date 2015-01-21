@@ -35,4 +35,9 @@ public class Ausgang extends GameObject {
     public String getPropertyRepresentation() {
         return "2";
     }
+
+    @Override
+    public String getName() {
+        return "Exit";
+    }
 }

@@ -32,4 +32,9 @@ public class Eingang extends GameObject {
     public String getPropertyRepresentation() {
         return "1";
     }
+
+    @Override
+    public String getName() {
+        return "Entrance";
+    }
 }

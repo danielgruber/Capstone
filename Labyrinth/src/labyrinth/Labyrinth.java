@@ -1,7 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ *
+ * @author Daniel Gruber
+ * @copyright 2014 Daniel Gruber
+ * @license GNU Lesser General Public License, version 3; see "LICENSE.txt"
  */
 package labyrinth;
 
@@ -12,8 +13,12 @@ import labyrinth.game.GameFileNotFoundOrMalformedException;
 import labyrinth.game.GameLoadDelegate;
 import labyrinth.game.GameLoadView;
 import labyrinth.game.GameModel;
+import labyrinth.game.GameSaveView;
+import labyrinth.game.GameSaveViewDelegate;
 import labyrinth.game.GameView;
 import labyrinth.game.GameViewDelegate;
+import labyrinth.game.LegendDelegate;
+import labyrinth.game.LegendView;
 import labyrinth.message.Message;
 import labyrinth.message.MessageDelegate;
 import labyrinth.terminalManager.TerminalManager;
@@ -23,7 +28,7 @@ import labyrinth.terminalManager.view.ViewManager;
  *
  * @author D
  */
-public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDelegate, MessageDelegate {
+public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDelegate, MessageDelegate, GameSaveViewDelegate, LegendDelegate {
 
     /**
      * managers for terminal and views.
@@ -36,8 +41,10 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
      */
     GameMenu menu;
     GameLoadView loadView;
+    GameSaveView saveView;
     GameView gameView;
     GameModel gameModel;
+    LegendView legendView;
     
     /**
      * game information
@@ -87,6 +94,13 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
         viewManager.setView(menu);
     }
     
+    public void showSaveScreen() {
+        saveView = new GameSaveView();
+        saveView.delegate = this;
+        
+        viewManager.setView(saveView);
+    }
+    
     /**
      * delegate of GameMenu.
      * 
@@ -100,11 +114,24 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
         } else if(action == GameMenu.GAME_RESUME && inGame) {
             viewManager.setView(gameView);
         } else if(action == GameMenu.SHOW_LEGEND) {
-            
+            showLegend();
         } else if(action == GameMenu.GAME_NEW) {
             generateLevelAndLoad();
+        } else if(action == GameMenu.GAME_SAVE) {
+            showSaveScreen();
         }
     }
+    
+    public void createLegendView() {
+        legendView = new LegendView();
+        legendView.delegate = this;
+    }
+    
+    public void showLegend() {
+        createLegendView();
+        viewManager.setView(legendView);
+    }
+    
 
     // adds numbers at the end of the file.
     public String getFileName(String start, String ext) {
@@ -182,5 +209,24 @@ public class Labyrinth implements GameMenuDelegate, GameLoadDelegate, GameViewDe
         inGame = false;
         lose.delegate = this;
         this.viewManager.setView(lose);
+    }
+
+    @Override
+    public void save(String filename) {
+        if(this.gameModel != null) {
+            if(this.gameModel.save(filename)) {
+                this.wantsToMenu();
+            }
+        }
+    }
+
+    @Override
+    public void continueGame() {
+        if(this.gameModel != null) {
+            GameView v = loadGameViewWithModel(this.gameModel);
+            v.delegate = this;
+            viewManager.setView(v);
+            inGame = true;
+        }
     }
 }

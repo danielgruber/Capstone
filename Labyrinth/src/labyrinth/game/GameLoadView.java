@@ -6,22 +6,11 @@
  */
 package labyrinth.game;
 
-import com.googlecode.lanterna.input.Key;
-import com.googlecode.lanterna.input.Key.Kind;
-import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.Terminal.Color;
-import labyrinth.terminalManager.KeyboardDelegate;
-import labyrinth.terminalManager.view.View;
-import labyrinth.terminalManager.view.ViewCharacter;
-
 /**
  *
  * @author D
  */
 public class GameLoadView extends InputField {
-
-    String message = "Type Filename to load. Default is level.properties.";
-    String secondMessage = "Folder is the folder in which you launched the program.";
 
     /**
      * Delegate.
@@ -40,6 +29,21 @@ public class GameLoadView extends InputField {
        if(delegate != null) {
            this.delegate.cancelLoading();
        }
+    }
+
+    @Override
+    public String getMessage() {
+        return "Type Filename to load. Default is level.properties.";
+    }
+
+    @Override
+    public String getSecondMessage() {
+        return "Folder is the folder in which you launched the program.";
+    }
+    
+    @Override
+    public String defaultName() {
+        return "level.properties";
     }
     
 }

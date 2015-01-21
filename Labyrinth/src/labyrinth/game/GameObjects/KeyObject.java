@@ -36,4 +36,9 @@ public class KeyObject extends GameObject implements InventoryGameObject {
     public String getPropertyRepresentation() {
         return "5";
     }
+
+    @Override
+    public String getName() {
+        return "Key";
+    }
 }

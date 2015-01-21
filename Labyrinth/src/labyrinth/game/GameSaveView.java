@@ -14,9 +14,6 @@ public class GameSaveView extends InputField {
 
     public GameSaveViewDelegate delegate;
     
-    String message = "Type Filename in which the state should be stored. Default is savegame.properties.";
-    String secondMessage = "Folder is the folder in which you launched the program.";
-    
     @Override
     public void submit(String n) {
         if(this.delegate != null) {
@@ -29,6 +26,21 @@ public class GameSaveView extends InputField {
         if(this.delegate != null) {
             this.delegate.continueGame();
         }
+    }
+
+    @Override
+    public String getMessage() {
+        return  "Type Filename in which the state should be stored. Default is savegame.properties.";
+    }
+
+    @Override
+    public String getSecondMessage() {
+        return "Folder is the folder in which you launched the program.";
+    }
+
+    @Override
+    public String defaultName() {
+        return "savegame.properties";
     }
     
 }

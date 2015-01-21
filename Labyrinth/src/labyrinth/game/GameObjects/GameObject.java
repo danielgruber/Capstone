@@ -70,6 +70,11 @@ abstract public class GameObject {
      */
     abstract public ViewCharacter getCharacter(); 
     
+    /**
+     * name for legend.
+     */
+    abstract public String getName();
+    
      /**
      * defines action when coliding. The action is called on the object
      * which is not in debt of the colision.

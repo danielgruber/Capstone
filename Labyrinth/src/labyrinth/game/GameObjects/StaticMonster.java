@@ -37,5 +37,10 @@ public class StaticMonster extends GameObject {
     public String getPropertyRepresentation() {
         return "3";
     }
+
+    @Override
+    public String getName() {
+        return "Monster";
+    }
     
 }

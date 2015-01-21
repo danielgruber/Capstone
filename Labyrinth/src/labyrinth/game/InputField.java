@@ -27,16 +27,7 @@ abstract public class InputField extends View implements KeyboardDelegate {
      */
     boolean d = true;
     
-    /**
-     * default value.
-     */
-    String currentName = "level.properties";
-    
-    /**
-     * message.
-     */
-    String message = "Type Filename to load. Default is level.properties.";
-    String secondMessage = "Folder is the folder in which you launched the program.";
+    String currentName = "";
     
     /**
      * 
@@ -50,10 +41,10 @@ abstract public class InputField extends View implements KeyboardDelegate {
         
         topPos = (rowsVisible - 10) / 2;
         
-        fillLineWithAlignCenter(view[topPos], message);
-        fillLineWithAlignCenter(view[topPos + 1], secondMessage);
+        fillLineWithAlignCenter(view[topPos], this.getMessage());
+        fillLineWithAlignCenter(view[topPos + 1], this.getSecondMessage());
         
-        fillLineWithAlignCenter(view[topPos + 3], currentName);
+        fillLineWithAlignCenter(view[topPos + 3], this.defaultName());
         for(int i = 0; i < view[topPos + 3].length; i++) {
             if(view[topPos + 3][i] != null) {
                 view[topPos + 3][i].foregroundColor = Terminal.Color.BLACK;
@@ -64,9 +55,13 @@ abstract public class InputField extends View implements KeyboardDelegate {
         return view;
     }
     
+    abstract public String getMessage();
+    abstract public String getSecondMessage();
+    abstract public String defaultName();
+    
     public void keyPressed(Key key) {
         if(key.getKind() == Key.Kind.Enter) {
-            String n = currentName.trim().equals("") ?  "level.properties" : currentName;
+            String n = currentName.trim().equals("") ?  this.defaultName() : currentName;
             submit(n);
         } else if(key.getKind() == Key.Kind.Escape) {
             cancel();

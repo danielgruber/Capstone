@@ -6,7 +6,6 @@
  */
 package labyrinth.game;
 
-import com.googlecode.lanterna.input.Key;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -102,7 +101,7 @@ public class GameModel  {
         }
         
         this.inventory = new InventoryManager();
-        if(props.getProperty("hasKey") == "true") {
+        if("true".equals(props.getProperty("hasKey"))) {
             this.inventory.add(new KeyObject());
         }
         
@@ -423,12 +422,15 @@ public class GameModel  {
     
     public boolean save(String toFile) {
         
+        System.out.println("Save to " + toFile);
+        System.out.println("has key: " +  this.inventory.hasItemOfType(KeyObject.class));
+        
         Properties prop = new Properties();
         
         prop.setProperty("Height", "" + matrix[0].length);
         prop.setProperty("Width", "" + matrix.length);
         prop.setProperty("lifes", "" + this.lifeManager.getLifes());
-        prop.setProperty("hasKey", this.inventory.hasItemOfType(Key.class) ? "true" : "false");
+        prop.setProperty("hasKey", this.inventory.hasItemOfType(KeyObject.class) ? "true" : "false");
         
         for(int x = 0; x < matrix.length; x++) {
             for(int y = 0; y < matrix[0].length; y++) {
