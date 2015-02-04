@@ -36,7 +36,7 @@ public class TerminalManager extends Thread implements CharacterDelegate {
     /**
      * the terminal.
      */
-    private SwingTerminal terminal;
+    private Terminal terminal;
     private JFrame frame;
     
     /**
@@ -60,7 +60,7 @@ public class TerminalManager extends Thread implements CharacterDelegate {
         return frame;
     }
     
-    public SwingTerminal getTerminal() {
+    public Terminal getTerminal() {
         return terminal;
     }
     
@@ -76,12 +76,14 @@ public class TerminalManager extends Thread implements CharacterDelegate {
         
         terminal.enterPrivateMode();
         
-        frame = terminal.getJFrame();
-        
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new WindowEventAdapter());
-        frame.addComponentListener(new WindowResizedAdapter());
-        
+        if(terminal instanceof SwingTerminal) {
+            frame = ((SwingTerminal)terminal).getJFrame();
+
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            frame.addWindowListener(new WindowEventAdapter());
+            frame.addComponentListener(new WindowResizedAdapter());
+        }
+            
         if(shouldRun) {
             super.start();
         } else {
